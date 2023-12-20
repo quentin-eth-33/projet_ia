@@ -205,6 +205,27 @@ class Board:
         if player == self._WHITE:
             return self._nbWHITE - self._nbBLACK
         return self._nbBLACK - self._nbWHITE
+    
+    def heuristiqueV2(self, player):
+        score = 0
+        coin_value = 25  # Valeur d'un coin
+        edge_value = 5   # Valeur d'une case sur le bord mais pas dans un coin
+        internal_value = 1  # Valeur des autres cases
+
+        for x in range(self._boardsize):
+            for y in range(self._boardsize):
+                if self._board[x][y] == player:
+                    if (x == 0 or x == self._boardsize - 1) and (y == 0 or y == self._boardsize - 1):
+                        score += coin_value  # Coin
+                    elif x == 0 or x == self._boardsize - 1 or y == 0 or y == self._boardsize - 1:
+                        score += edge_value  # Bord
+                    else:
+                        score += internal_value  # Interne
+                elif self._board[x][y] != self._EMPTY:
+                    score -= internal_value  # Pièce adverse
+
+        return score
+
 
     def _piece2str(self, c):
         if c==self._WHITE:

@@ -13,6 +13,7 @@ class AIPlayer(Player):
             if move[0] == self.color:
                 board.push(move)
                 score = self.minimax(board, self.depth, board._BLACK == self.color)
+                print(f"Coup: {move}, Score: {score}")
                 board.pop()
 
                 if self.color == board._BLACK and score > best_score or \
@@ -25,26 +26,26 @@ class AIPlayer(Player):
 
     def minimax(self, board, depth, maximizingPlayer):
         if depth == 0 or board.is_game_over():
-            return board.heuristique(self.color)
+            return board.heuristiqueV2(self.color)
 
         if maximizingPlayer:
             maxEval = float('-inf')
             for move in board.legal_moves():
-                if move[0] == board._BLACK:
+                if move[0] == self.color:  # Mouvements de l'IA
                     board.push(move)
-                    eval = self.minimax(board, depth - 1, False)
+                    eval = self.minimax(board, depth - 1, False)  # Changement de joueur
                     board.pop()
                     maxEval = max(maxEval, eval)
-            return maxEval
+            return maxEval if maxEval != float('-inf') else 0  # Retourner 0 si aucun coup n'améliore le score
         else:
             minEval = float('inf')
             for move in board.legal_moves():
-                if move[0] == board._WHITE:
+                if move[0] != self.color:  # Mouvements de l'adversaire
                     board.push(move)
-                    eval = self.minimax(board, depth - 1, True)
+                    eval = self.minimax(board, depth - 1, True)  # Changement de joueur
                     board.pop()
                     minEval = min(minEval, eval)
-            return minEval
+            return minEval if minEval != float('inf') else 0  # Retourner 0 si aucun coup n'améliore le score
     
 
 
