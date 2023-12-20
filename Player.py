@@ -1,6 +1,6 @@
 class Player:
     def __init__(self, color):
-        self.color = color  # Couleur du joueur (Board._BLACK ou Board._WHITE)
+        self.color = color  
 
     def get_move(self, board):
         """
