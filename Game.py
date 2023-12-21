@@ -1,4 +1,4 @@
-from Riversi import Board
+from Reversi import Board
 from AIPlayer import AIPlayer
 from HumanPlayer import HumanPlayer
 
