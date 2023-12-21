@@ -1,14 +1,82 @@
 from Player import Player
+import time
 
 class AIPlayer(Player):
-    def __init__(self, color, depth=8):
-        super().__init__(color)
-        self.depth = depth 
-
     
-    def get_move(self, board):
-        return self.get_move_alphabeta(board)
+    def __init__(self, color, depth_limit=20, time_limit=10):
+        super().__init__(color)
+        self.depth_limit = depth_limit
+        self.time_limit = time_limit
         
+    def get_move(self, board):
+        start_time = time.time()
+        best_move = None
+        depth = 1
+
+        while depth <= self.depth_limit:
+            current_time = time.time()
+            if current_time - start_time > self.time_limit:
+                break  # Arrête la recherche si le temps limite est atteint
+
+            current_best_move = self.iterative_search(board, depth, start_time)
+            if current_best_move:
+                best_move = current_best_move
+
+            depth += 1
+
+        return best_move if best_move is not None else [self.color, -1, -1]
+
+    def iterative_search(self, board, depth, start_time):
+        best_score = float('-inf') if self.color == board._BLACK else float('inf')
+        best_move = None
+
+        for move in board.legal_moves():
+            if time.time() - start_time > self.time_limit:
+                break 
+
+            board.push(move)
+            score = self.minimax(board, depth - 1, False, start_time)
+            board.pop()
+
+            if (self.color == board._BLACK and score > best_score) or \
+               (self.color == board._WHITE and score < best_score):
+                best_score = score
+                best_move = move
+
+        return best_move
+
+    def minimax(self, board, depth, maximizingPlayer, start_time):
+        if depth == 0 or board.is_game_over() or time.time() - start_time > self.time_limit:
+            return board.heuristique(self.color)
+
+        if maximizingPlayer:
+            maxEval = float('-inf')
+            for move in board.legal_moves():
+                if time.time() - start_time > self.time_limit:
+                    break 
+
+                board.push(move)
+                eval = self.minimax(board, depth - 1, False, start_time)
+                board.pop()
+                maxEval = max(maxEval, eval)
+
+            return maxEval
+
+        else:
+            minEval = float('inf')
+            for move in board.legal_moves():
+                if time.time() - start_time > self.time_limit:
+                    break  
+
+                board.push(move)
+                eval = self.minimax(board, depth - 1, True, start_time)
+                board.pop()
+                minEval = min(minEval, eval)
+
+            return minEval
+    #-------------------------------------------------------------------------------------------------------- 
+    #--------------------------------------------------------------------------------------------------------  
+    #--------------------------------------------------------------------------------------------------------
     
     def get_move_minimax(self, board):
         best_move = None
@@ -27,31 +95,6 @@ class AIPlayer(Player):
                 best_move = move
 
         return best_move if best_move is not None else [self.color, -1, -1]
-
-    def minimax(self, board, depth, maximizingPlayer):
-        if depth == 0 or board.is_game_over():
-            return board.heuristique(self.color)
-
-        if maximizingPlayer:
-            maxEval = float('-inf')
-            for move in board.legal_moves():
-                board.push(move)
-                eval = self.minimax(board, depth - 1, False)
-                board.pop()
-                maxEval = max(maxEval, eval)
-            return maxEval
-        else:
-            minEval = float('inf')
-            for move in board.legal_moves():
-                board.push(move)
-                eval = self.minimax(board, depth - 1, True)
-                board.pop()
-                minEval = min(minEval, eval)
-            return minEval
-
-    #-------------------------------------------------------------------------------------------------------- 
-    #--------------------------------------------------------------------------------------------------------  
-    #--------------------------------------------------------------------------------------------------------
     
     def get_move_alphabeta(self, board):
         best_move = None
