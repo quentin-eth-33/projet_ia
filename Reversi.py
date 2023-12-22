@@ -12,7 +12,7 @@ class Board:
     _EMPTY = 0
 
     # Attention, la taille du plateau est donnÃ©e en paramÃ¨tre
-    def __init__(self, boardsize = 8):
+    def __init__(self, boardsize = 10):
       self._nbWHITE = 2
       self._nbBLACK = 2
       self._nextPlayer = self._BLACK
@@ -245,6 +245,8 @@ class Board:
         board_str += "Prochain joueur: " + ("NOIR" if self._nextPlayer == self._BLACK else "BLANC") + "\n"
         board_str += str(self._nbBLACK) + " noirs et " + str(self._nbWHITE) + " blancs sur le plateau\n"
         board_str += "(passages successifs: " + str(self._successivePass) + " )"
+        board_str += "\n"
+        board_str += "\n"
         return board_str
 
 
