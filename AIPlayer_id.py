@@ -11,7 +11,7 @@ class AIPlayer_id(Player):
     # 'color' détermine la couleur du joueur (noir ou blanc).
     # 'depth_limit' est la profondeur maximale de recherche dans l'arbre de jeu.
     # 'time_limit' est le temps maximal en secondes pour effectuer un coup.
-    def __init__(self, color, depth_limit=1, time_limit=10, numAlgo=1):
+    def __init__(self, color, depth_limit, time_limit, numAlgo):
         super().__init__(color)
         self.depth_limit = depth_limit
         self.time_limit = time_limit
@@ -54,6 +54,7 @@ class AIPlayer_id(Player):
                 break 
             
             board.push(move)
+            print(f"Num Algo: {self.numAlgo}")
             if self.numAlgo == 1:
                 score = self.minimax_id(board, depth - 1, False, start_time)
             elif self.numAlgo == 2:
@@ -80,13 +81,16 @@ class AIPlayer_id(Player):
     # Implémente l'algorithme NegaMax avec élagage Alpha-Beta dans un contexte avec limite de temps (Iterative Deepening).
     # 'depth' est la profondeur actuelle de recherche.
     # 'alpha' et 'beta' sont les bornes de l'élagage Alpha-Beta.    
-    # 'color' est utilisé pour multiplier la valeur heuristique et alterne entre chaque niveau de profondeur.
+    # 'color' est utilisé pour multiplier la valeur heuristiqueV2 et alterne entre chaque niveau de profondeur.
     def negamax_alphabeta_id(self, board, depth, alpha, beta, color, start_time):
-        if depth == 0 or board.is_game_over():
-            return color * board.heuristique(self.color)
+        if depth == 0 or board.is_game_over() or time.time() - start_time > self.time_limit:
+            return color * board.heuristiqueV2(self.color)
 
         maxEval = float('-inf')
         for move in board.legal_moves():
+            if time.time() - start_time > self.time_limit:
+                break
+
             if (move[0] == 1 and self.color == board._BLACK) or (move[0] == 2 and board._WHITE):
                 board.push(move)
                 eval = -self.negamax_alphabeta_id(board, depth - 1, -beta, -alpha, -color, start_time)
@@ -96,30 +100,30 @@ class AIPlayer_id(Player):
                 if alpha >= beta:
                     break
         return maxEval
+
     
     # Implémente l'algorithme NegaMax pour l'IA dans un contexte avec limite de temps (Iterative Deepening).
     def negamax_id(self, board, depth, color, start_time):
         if depth == 0 or board.is_game_over() or time.time() - start_time > self.time_limit:
-            return board.heuristique(self.color)
+            return board.heuristiqueV2(self.color)
 
         maxEval = float('-inf')
         for move in board.legal_moves():
             if time.time() - start_time > self.time_limit:
                 break
+
             if (move[0] == 1 and self.color == board._BLACK) or (move[0] == 2 and board._WHITE):
                 board.push(move)
                 eval = -self.negamax_id(board, depth - 1, -color, start_time)
                 board.pop()
                 maxEval = max(maxEval, eval)
         return maxEval
-
-
     # Partie maximisante de l'algorithme d'élagage Alpha-Beta.
     # 'l' est le niveau actuel de profondeur et 'lmax' la profondeur maximale.
     # Utilisé pour maximiser le score du joueur actuel.
     def alphaBetaMax_id(self, board, alpha, beta, l, lmax, start_time):
         if board.is_game_over() or (l == lmax) or time.time() - start_time > self.time_limit:
-            return board.heuristique(self.color)
+            return board.heuristiqueV2(self.color)
 
         possible_moves = board.legal_moves()
         for m in possible_moves:
@@ -135,7 +139,7 @@ class AIPlayer_id(Player):
     def alphaBetaMin_id(self, board, alpha, beta, l, lmax, start_time):
 
         if board.is_game_over() or (l == lmax) or time.time() - start_time > self.time_limit:
-            return board.heuristique(self.color)
+            return board.heuristiqueV2(self.color)
 
         possible_moves = board.legal_moves()
         for m in possible_moves:

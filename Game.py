@@ -7,9 +7,13 @@ class Game:
     # Initialise une nouvelle partie avec une taille de plateau spécifiée. 
     # Crée un plateau de jeu et initialise les joueurs
     def __init__(self, board_size=10):
+        
+        depth = 7
+        time_limit =10
         self.board = Board(board_size)
-        self.players = [AIPlayer_id(Board._BLACK,8,2), HumanPlayer(Board._WHITE)]
-
+        
+        self.players = [AIPlayer(Board._BLACK, depth, AIPlayer._NEGAMAX), HumanPlayer(Board._WHITE)]
+        # Autre exemple: self.players = [AIPlayer_id(Board._BLACK, depth, time_limit, AIPlayer._NEGAMAX), AIPlayer(Board._WHITE,depth, AIPlayer._MINIMAX)]
 
 
     # Démarre et exécute la boucle de jeu. Continue jusqu'à ce que le jeu soit terminé.

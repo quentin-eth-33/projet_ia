@@ -8,7 +8,7 @@ class AIPlayer(Player):
     
     
     # Initialise une instance de AIPlayer avec une couleur spécifiée et une profondeur de recherche par défaut.
-    def __init__(self, color, depth=2, numAlgo=1):
+    def __init__(self, color, depth, numAlgo):
         super().__init__(color)
         self.depth = depth 
         self.numAlgo = numAlgo
@@ -50,7 +50,7 @@ class AIPlayer(Player):
     # donné en explorant récursivement les coups possibles jusqu'à une profondeur spécifiée.
     def minimax(self, board, depth, maximizingPlayer):
         if depth == 0 or board.is_game_over():
-            return board.heuristique(self.color)
+            return board.heuristiqueV2(self.color)
 
         if maximizingPlayer:
             maxEval = float('-inf')
@@ -96,7 +96,7 @@ class AIPlayer(Player):
     # où alphaBetaMax maximise le score et alphaBetaMin minimise le score. 
     def alphaBetaMax(self, board, alpha, beta, l, lmax):
         if board.is_game_over() or (l == lmax):
-            return board.heuristique(self.color)
+            return board.heuristiqueV2(self.color)
 
         possible_moves = board.legal_moves()
         for m in possible_moves:
@@ -110,7 +110,7 @@ class AIPlayer(Player):
     def alphaBetaMin(self, board, alpha, beta, l, lmax):
 
         if board.is_game_over() or (l == lmax):
-            return board.heuristique(self.color)
+            return board.heuristiqueV2(self.color)
 
         possible_moves = board.legal_moves()
         for m in possible_moves:
@@ -141,7 +141,7 @@ class AIPlayer(Player):
     # Algorithme NegaMax récursif qui évalue le meilleur coup en alternant les perspectives des joueurs à chaque niveau de l'arbre de recherche.
     def negamax(self, board, depth, color):
         if depth == 0 or board.is_game_over():
-            return board.heuristique(self.color)
+            return board.heuristiqueV2(self.color)
 
         maxEval = float('-inf')
         for move in board.legal_moves():
@@ -175,7 +175,7 @@ class AIPlayer(Player):
     # Cette méthode est la version améliorée de NegaMax, qui utilise les paramètres alpha et bêta pour élaguer l'arbre de recherche plus efficacement.
     def negamax_alphabeta(self, board, depth, alpha, beta, color):
         if depth == 0 or board.is_game_over():
-            return board.heuristique(self.color)
+            return board.heuristiqueV2(self.color)
 
         maxEval = float('-inf')
         for move in board.legal_moves():
